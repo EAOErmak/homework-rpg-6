@@ -14,6 +14,16 @@ public class DodgeHandler extends DefenseHandler {
 
     @Override
     public void handle(int incomingDamage, ArenaFighter target) {
+
+        double roll = random.nextDouble(0, 1);
+
+        if(roll < dodgeChance){
+            System.out.println(target.getName() + " dodged the attack");
+            return;
+        }
+
+        passToNext(incomingDamage, target);
+
         // TODO: Generate a random double between 0.0 and 1.0 using random.nextDouble().
         // TODO: If the roll is less than dodgeChance, the attack is fully dodged:
         //       - Print a dodge message (e.g. "[Dodge] Attack evaded!")
