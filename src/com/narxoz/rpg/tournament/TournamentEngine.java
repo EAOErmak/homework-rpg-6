@@ -12,6 +12,7 @@ import com.narxoz.rpg.command.ActionQueue;
 import com.narxoz.rpg.command.AttackCommand;
 import com.narxoz.rpg.command.DefendCommand;
 import com.narxoz.rpg.command.HealCommand;
+
 import java.util.Random;
 
 public class TournamentEngine {
@@ -31,8 +32,46 @@ public class TournamentEngine {
 
     public TournamentResult runTournament() {
         TournamentResult result = new TournamentResult();
-        int round = 0;
+        int round = 1;
         final int maxRounds = 20;
+
+        DefenseHandler dodge = new DodgeHandler(hero.getDodgeChance(), random.nextLong());
+        BlockHandler block = new BlockHandler(hero.getBlockRating() / 100.0);
+        ArmorHandler armor = new ArmorHandler(hero.getArmorValue());
+        HpHandler hp = new HpHandler();
+
+        dodge.setNext(block).setNext(armor).setNext(hp);
+
+        ActionQueue actions = new ActionQueue();
+
+        while (round <= maxRounds){
+            for(int i = 0; i < 3; i++){
+                double chances = random.nextDouble();
+                if(chances > 0.5){
+                    actions.enqueue(new AttackCommand(opponent, hero.getAttackPower()));
+                } else if (chances < 0.1) {
+                    actions.enqueue(new HealCommand(hero, (int)(chances * 200)));
+                }else {
+                    actions.enqueue(new DefendCommand(hero, random.nextDouble(0, 0.3)));
+                }
+            }
+
+            actions.getCommandDescriptions();
+
+            actions.executeAll();
+
+            if(opponent.isAlive()) dodge.handle(opponent.getAttackPower(), hero);
+            else break;
+
+
+
+
+            String logRound = "[Round " + round + " ] Opponent HP: " + opponent.getHealth() + " | Hero HP: " + hero.getHealth();
+            System.out.println(logRound);
+            result.addLine(logRound);
+            round++;
+        }
+
 
         // TODO: Build the defense chain using fluent setNext():
         //   DodgeHandler -> BlockHandler -> ArmorHandler -> HpHandler
@@ -61,7 +100,7 @@ public class TournamentEngine {
 
         // TODO: After the loop, determine the winner.
         //   result.setWinner(hero.isAlive() ? hero.getName() : opponent.getName());
-        result.setWinner("TODO");
+        result.setWinner(hero.isAlive() ? hero.getName() : opponent.getName());
         result.setRounds(round);
         return result;
     }
