@@ -15,7 +15,7 @@ public class DodgeHandler extends DefenseHandler {
     @Override
     public void handle(int incomingDamage, ArenaFighter target) {
 
-        double roll = random.nextDouble(0, 1);
+        double roll = random.nextDouble();
 
         if(roll < dodgeChance){
             System.out.println(target.getName() + " dodged the attack");

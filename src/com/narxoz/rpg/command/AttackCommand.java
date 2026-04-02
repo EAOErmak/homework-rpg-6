@@ -14,6 +14,7 @@ public class AttackCommand implements ActionCommand {
 
     @Override
     public void execute() {
+        damageDealt = 0;
         int actualDamageApplied = target.takeDamage(attackPower);
         if(actualDamageApplied == 0){
             System.out.println(target.getName() + " is already dead, cannot take damage");
@@ -37,6 +38,6 @@ public class AttackCommand implements ActionCommand {
     @Override
     public String getDescription() {
         // TODO: Return a readable summary, e.g. "Attack for 18 damage".
-        return "Dealt " + damageDealt + " damage to " + target.getName();
+        return "Attack " + target.getName() + " for " + attackPower + " damage";
     }
 }

@@ -29,6 +29,6 @@ public class DefendCommand implements ActionCommand {
     @Override
     public String getDescription() {
         // TODO: Return a readable summary, e.g. "Defend (dodge boost: +0.15)".
-        return "Dodge boost is: " + dodgeBoost;
+        return "Defend (dodge boost: +" + dodgeBoost + ")";
     }
 }

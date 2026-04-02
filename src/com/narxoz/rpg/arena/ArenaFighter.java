@@ -26,10 +26,12 @@ public class ArenaFighter extends ArenaUnit{
         // TODO: Increase health by amount; do not exceed maxHealth.
         // TODO: Decide what happens when healPotions runs out — should healing be blocked?
 
-        if (healPotions < 1) return 0;
+        if (healPotions < 1 || amount <= 0 || health >= maxHealth) return 0;
 
         int maxHeal = maxHealth - health;
         int actual  = Math.min(maxHeal, amount);
+
+        if (actual <= 0) return 0;
 
         health += actual;
         healPotions--;

@@ -14,6 +14,7 @@ public class HealCommand implements ActionCommand {
 
     @Override
     public void execute() {
+        actualHealApplied = 0;
         actualHealApplied = target.heal(healAmount);
 
         if (actualHealApplied == 0) {

@@ -32,44 +32,37 @@ public class TournamentEngine {
 
     public TournamentResult runTournament() {
         TournamentResult result = new TournamentResult();
-        int round = 1;
+        int round = 0;
         final int maxRounds = 20;
-
-        DefenseHandler dodge = new DodgeHandler(hero.getDodgeChance(), random.nextLong());
-        BlockHandler block = new BlockHandler(hero.getBlockRating() / 100.0);
-        ArmorHandler armor = new ArmorHandler(hero.getArmorValue());
-        HpHandler hp = new HpHandler();
-
-        dodge.setNext(block).setNext(armor).setNext(hp);
-
         ActionQueue actions = new ActionQueue();
 
-        while (round <= maxRounds){
-            for(int i = 0; i < 3; i++){
-                double chances = random.nextDouble();
-                if(chances > 0.5){
-                    actions.enqueue(new AttackCommand(opponent, hero.getAttackPower()));
-                } else if (chances < 0.1) {
-                    actions.enqueue(new HealCommand(hero, (int)(chances * 200)));
-                }else {
-                    actions.enqueue(new DefendCommand(hero, random.nextDouble(0, 0.3)));
-                }
-            }
+        while (round < maxRounds && hero.isAlive() && opponent.isAlive()){
+            round++;
 
-            actions.getCommandDescriptions();
+            AttackCommand attackCommand = new AttackCommand(opponent, hero.getAttackPower());
+            HealCommand healCommand = new HealCommand(hero, 15);
+            DefendCommand defendCommand = new DefendCommand(hero, 0.05);
+
+            actions.enqueue(attackCommand);
+            actions.enqueue(healCommand);
+            actions.enqueue(defendCommand);
+
+            System.out.println("[Round " + round + "] Queued actions:");
+            for (String description : actions.getCommandDescriptions()) {
+                System.out.println("  " + description);
+            }
 
             actions.executeAll();
 
-            if(opponent.isAlive()) dodge.handle(opponent.getAttackPower(), hero);
-            else break;
+            if(opponent.isAlive()) {
+                DefenseHandler defenseChain = buildDefenseChain();
+                defenseChain.handle(opponent.getAttackPower(), hero);
+            }
+            defendCommand.undo();
 
-
-
-
-            String logRound = "[Round " + round + " ] Opponent HP: " + opponent.getHealth() + " | Hero HP: " + hero.getHealth();
+            String logRound = "[Round " + round + "] Opponent HP: " + opponent.getHealth() + " | Hero HP: " + hero.getHealth();
             System.out.println(logRound);
             result.addLine(logRound);
-            round++;
         }
 
 
@@ -103,5 +96,14 @@ public class TournamentEngine {
         result.setWinner(hero.isAlive() ? hero.getName() : opponent.getName());
         result.setRounds(round);
         return result;
+    }
+
+    private DefenseHandler buildDefenseChain() {
+        DefenseHandler dodge = new DodgeHandler(hero.getDodgeChance(), random.nextLong());
+        DefenseHandler block = new BlockHandler(hero.getBlockRating() / 100.0);
+        DefenseHandler armor = new ArmorHandler(hero.getArmorValue());
+        DefenseHandler hp = new HpHandler();
+        dodge.setNext(block).setNext(armor).setNext(hp);
+        return dodge;
     }
 }
