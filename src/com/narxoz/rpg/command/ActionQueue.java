@@ -15,6 +15,7 @@ public class ActionQueue {
             System.out.println("Queue is empty");
             return;
         }
+        //Here I just could use removeLast()
         queue.remove(queue.size() - 1);
     }
 
