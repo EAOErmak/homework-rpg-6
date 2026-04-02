@@ -16,28 +16,22 @@ public class AttackCommand implements ActionCommand {
     public void execute() {
         damageDealt = 0;
         int actualDamageApplied = target.takeDamage(attackPower);
-        if(actualDamageApplied == 0){
+        if(actualDamageApplied == 0) {
             System.out.println(target.getName() + " is already dead, cannot take damage");
             return;
         }
         damageDealt = actualDamageApplied;
-        // TODO: Deal attackPower damage to the target using target.takeDamage(int).
-        // TODO: Store the actual damage dealt in damageDealt so that undo() can reverse it exactly.
-        // TODO: Consider: should damageDealt be capped at the target's remaining health?
     }
 
     @Override
     public void undo() {
-        if (damageDealt > 0) {
+        if(damageDealt > 0) {
             target.restoreHealth(damageDealt);
         }
-        // TODO: Restore the stored damageDealt to the target using target.restoreHealth(int).
-        // Note: Use damageDealt (what was actually applied), not attackPower.
     }
 
     @Override
     public String getDescription() {
-        // TODO: Return a readable summary, e.g. "Attack for 18 damage".
         return "Attack " + target.getName() + " for " + attackPower + " damage";
     }
 }

@@ -17,8 +17,5 @@ public class ArmorHandler extends DefenseHandler {
         System.out.println("Absorbed " + absorbedDamage + " damage");
 
         passToNext(remainingDamage, target);
-        // TODO: Subtract armorValue from incomingDamage; clamp the result to a minimum of 0.
-        // TODO: Print an armor message showing how much was absorbed.
-        // TODO: Pass the remaining damage to the next handler.
     }
 }
